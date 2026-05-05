@@ -1,0 +1,80 @@
+# --------------------------------------------------------
+# Experiment No: 04
+# Subject: Artificial Intelligence (01CT0616)
+# Aim: To implement image classification using CNN
+# Student: Kolli Harikrishna
+# --------------------------------------------------------
+
+# Libraries Used:
+# tensorflow/keras → CNN model creation and training
+# CIFAR-10 → image dataset
+# matplotlib → accuracy and loss graphs
+
+import tensorflow as tf
+from tensorflow.keras import layers, models
+from tensorflow.keras.datasets import cifar10
+from tensorflow.keras.utils import to_categorical
+import matplotlib.pyplot as plt
+
+# Load CIFAR-10 dataset
+(train_images, train_labels), (test_images, test_labels) = cifar10.load_data()
+
+# Normalize image pixels
+train_images = train_images / 255.0
+test_images = test_images / 255.0
+
+# Convert labels to categorical format
+train_labels = to_categorical(train_labels, 10)
+test_labels = to_categorical(test_labels, 10)
+
+# Create CNN model
+model = models.Sequential([
+    layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)),
+    layers.MaxPooling2D(pool_size=(2, 2)),
+    layers.Flatten(),
+    layers.Dense(128, activation='relu'),
+    layers.Dense(10, activation='softmax')
+])
+
+# Compile model
+model.compile(
+    optimizer='adam',
+    loss='categorical_crossentropy',
+    metrics=['accuracy']
+)
+
+# Train model
+history = model.fit(
+    train_images,
+    train_labels,
+    epochs=10,
+    batch_size=64,
+    validation_data=(test_images, test_labels)
+)
+
+# Evaluate model
+test_loss, test_acc = model.evaluate(test_images, test_labels)
+
+print(f"Test accuracy: {test_acc * 100:.2f}%")
+
+# Accuracy graph
+plt.plot(history.history['accuracy'], label='Training Accuracy')
+plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
+plt.title('Model Accuracy')
+plt.xlabel('Epoch')
+plt.ylabel('Accuracy')
+plt.legend(loc='lower right')
+plt.show()
+
+# Loss graph
+plt.plot(history.history['loss'], label='Training Loss')
+plt.plot(history.history['val_loss'], label='Validation Loss')
+plt.title('Model Loss')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.legend(loc='upper right')
+plt.show()
+
+# Conclusion:
+# CNN is useful for image classification because it automatically extracts
+# important features from images using convolution and pooling layers.
