@@ -1,0 +1,79 @@
+# --------------------------------------------------------
+# Experiment No: 02
+# Subject: Artificial Intelligence (01CT0616)
+# Aim: To implement Linear Regression using Gradient Descent
+# Student: Kolli Harikrishna
+# --------------------------------------------------------
+
+# Libraries Used:
+# numpy → numerical operations
+# matplotlib → visualization
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Sample dataset
+X = np.array([1,2,3,4,5,6,7,8])
+Y = np.array([2,4,5,4,5,7,8,9])
+
+# Initialize parameters (slope m and intercept c)
+m = 0
+c = 0
+
+# Hyperparameters
+learning_rate = 0.01
+iterations = 1000
+n = len(X)
+
+# Store cost values
+cost_history = []
+
+# Gradient Descent Algorithm
+for i in range(iterations):
+    Y_pred = m * X + c   # Predicted values
+
+    # Cost function (Mean Squared Error)
+    cost = (1 / (2 * n)) * np.sum((Y_pred - Y) ** 2)
+    cost_history.append(cost)
+
+    # Derivatives (gradients)
+    dm = (1 / n) * np.sum((Y_pred - Y) * X)
+    dc = (1 / n) * np.sum(Y_pred - Y)
+
+    # Update parameters
+    m = m - learning_rate * dm
+    c = c - learning_rate * dc
+
+# Final parameters
+print("Final slope (m):", m)
+print("Final intercept (c):", c)
+
+
+# ---------------- VISUALIZATION ----------------
+
+# 1. Data points
+plt.scatter(X, Y)
+plt.title("Datapoints Scattering")
+plt.xlabel("X")
+plt.ylabel("Y")
+plt.show()
+
+# 2. Best fit line
+plt.scatter(X, Y)
+plt.plot(X, m * X + c)
+plt.title("Best Fit Line")
+plt.xlabel("X")
+plt.ylabel("Y")
+plt.show()
+
+# 3. Cost vs Iterations
+plt.plot(cost_history)
+plt.title("Cost vs Iterations")
+plt.xlabel("Iterations")
+plt.ylabel("Cost")
+plt.show()
+
+
+# Conclusion:
+# Gradient Descent helps to find optimal values of slope and intercept
+# by minimizing the error between predicted and actual values.
