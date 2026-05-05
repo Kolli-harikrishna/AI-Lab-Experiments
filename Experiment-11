@@ -1,0 +1,67 @@
+# --------------------------------------------------------
+# Experiment No: 11
+# Title: Movie Recommendation System using TF-IDF
+# Subject: Artificial Intelligence (01CT0616)
+# Student: Kolli Harikrishna
+# --------------------------------------------------------
+
+# Aim:
+# To recommend similar movies based on content using TF-IDF and cosine similarity.
+
+# Libraries Used:
+# pandas → data handling
+# sklearn → TF-IDF and similarity calculation
+
+# Application:
+# Used in Netflix, Amazon Prime, YouTube recommendations
+
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
+# Load dataset (make sure file exists in your system)
+df = pd.read_csv("movies.csv")   # change path if needed
+
+# Preprocessing
+df["genres"] = df["genres"].fillna("")
+df["overview"] = df["overview"].fillna("")
+
+# Combine features
+df["content"] = df["genres"] + " " + df["overview"]
+
+# TF-IDF Vectorization
+tfidf = TfidfVectorizer(stop_words="english")
+tfidf_matrix = tfidf.fit_transform(df["content"])
+
+# Compute cosine similarity
+cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
+
+# Remove duplicate titles
+indices = pd.Series(df.index, index=df["original_title"]).drop_duplicates()
+
+
+# Recommendation function
+def recommendation_movie(title, topn=10):
+    if title not in indices:
+        return "Movie not found!"
+
+    idx = indices[title]
+
+    sim_scores = list(enumerate(cosine_sim[idx]))
+    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+
+    # Skip first (same movie)
+    sim_scores = sim_scores[1:topn + 1]
+
+    movie_indices = [i[0] for i in sim_scores]
+
+    return df["original_title"].iloc[movie_indices]
+
+
+# Example
+print(recommendation_movie("Man of Steel"))
+
+
+# Conclusion:
+# TF-IDF converts text into numerical vectors and cosine similarity
+# helps in finding similar movies based on content features.
