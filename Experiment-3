@@ -1,0 +1,49 @@
+# --------------------------------------------------------
+# Experiment No: 03
+# Subject: Artificial Intelligence (01CT0616)
+# Aim: To implement K-Nearest Neighbors classification
+# Student: Kolli Harikrishna
+# --------------------------------------------------------
+
+# Libraries Used:
+# numpy, pandas → data handling
+# sklearn → dataset, model training, evaluation
+# matplotlib → visualization
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import confusion_matrix, accuracy_score
+from sklearn.preprocessing import StandardScaler
+
+# Sample dataset (replace with your dataset)
+from sklearn.datasets import load_iris
+data = load_iris()
+X = data.data
+y = data.target
+
+# Train test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Feature scaling
+sc = StandardScaler()
+X_train = sc.fit_transform(X_train)
+X_test = sc.transform(X_test)
+
+# Model
+model = KNeighborsClassifier(n_neighbors=5)
+model.fit(X_train, y_train)
+
+# Prediction
+y_pred = model.predict(X_test)
+
+# Results
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+print("Accuracy Score:", accuracy_score(y_test, y_pred))
+
+# Conclusion:
+# KNN is a supervised machine learning algorithm used for classification.
+# It classifies new data based on the majority class of nearest neighbors.
