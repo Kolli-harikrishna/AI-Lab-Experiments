@@ -1,0 +1,87 @@
+# --------------------------------------------------------
+# Experiment No: 06
+# Title: NLP Preprocessing Techniques
+# Subject: Artificial Intelligence (01CT0616)
+# Student: Kolli Harikrishna
+# --------------------------------------------------------
+
+# 1. Tokenization
+
+text = """This is Harikrishna, currently I am listening to the AI subject lab
+in the MA112 lab at Marwadi University, which is located in Rajkot."""
+
+# Splitting into words
+print(text.split())
+
+# Accessing character at index 5
+print(text[5])
+
+import spacy
+
+# Load spaCy English model
+nlp = spacy.load("en_core_web_sm")
+
+doc = nlp(text)
+
+# Accessing token at index 5
+print(doc[5])
+
+
+# Named Entity Recognition
+text = """I am Nishith Kotak, teaching the subject AI
+to Semester 6 students at Marwadi University, India."""
+
+doc = nlp(text)
+
+print("Named Entities:")
+for token in doc.ents:
+    print(token.text, token.label_)
+
+
+# POS Tags: Part of Speech Tagging
+text = "Let's google it"
+
+doc = nlp(text)
+
+print("POS Tags:")
+for token in doc:
+    print(token.text, token.pos_)
+
+
+# Lemmatization vs Stemming
+text = """I studied the subject AI and then
+meeting Mr. Sachin tomorrow in the meeting."""
+
+import nltk
+from nltk.stem.porter import PorterStemmer
+
+p_stem = PorterStemmer()
+
+print("Stemming:")
+for word in text.split():
+    print(word, "-->", p_stem.stem(word))
+
+
+print("Lemmatization:")
+for token in nlp(text):
+    print(token.text, "-", token.pos_, "-", token.lemma_)
+
+
+# Punctuation marks
+import string
+
+print("Punctuation Marks:")
+print(string.punctuation)
+
+
+# Stopwords
+from nltk.corpus import stopwords
+
+nltk.download("stopwords")
+
+print("Stopwords:")
+print(set(stopwords.words("english")))
+
+# Conclusion:
+# NLP preprocessing helps in cleaning and preparing text data
+# for further analysis and machine learning models.
