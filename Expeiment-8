@@ -1,0 +1,76 @@
+# --------------------------------------------------------
+# Experiment No: 08
+# Title: TF-IDF Vectorization and Document Similarity
+# Subject: Artificial Intelligence (01CT0616)
+# Student: Kolli Harikrishna
+# --------------------------------------------------------
+# Libraries Used:
+# numpy, pandas, scikit-learn
+
+# Application:
+# Used in search engines, document similarity, recommendation systems, and NLP.
+
+# 1. Perform TF-IDF vectorization of the corpus
+
+sentences = [
+    "I am living in the India country.",
+    "India is my country. All Indians are my brothers and sisters except my future wife.",
+    "In my country we follow the Sanatana Dharma where we respect our tradition and culture.",
+    "I like to play cricket in my heart.",
+    "Eleven members can play cricket.",
+    "Nowadays India is becoming the semiconductor hub.",
+    "We will make our own chips in our country like we have made the Vikram 32-bit chip."
+]
+
+# Import libraries
+import numpy as np
+import pandas as pd
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
+# TF-BOW
+tf_vectorizer = CountVectorizer()
+tf_matrix = tf_vectorizer.fit_transform(sentences)
+
+tf_similarity = cosine_similarity(tf_matrix)
+
+print("TF-BOW Similarity Matrix:")
+print(tf_similarity)
+
+
+# TF-IDF Embedding
+tfidf_vectorizer = TfidfVectorizer()
+tfidf_matrix = tfidf_vectorizer.fit_transform(sentences)
+
+tfidf_similarity = cosine_similarity(tfidf_matrix)
+
+print("\nTF-IDF Similarity Matrix:")
+print(tfidf_similarity)
+
+
+# Convert TF-IDF matrix to DataFrame
+tfidf_df = pd.DataFrame(
+    tfidf_matrix.toarray(),
+    columns=tfidf_vectorizer.get_feature_names_out()
+)
+
+print("\nTF-IDF Vectorized Form:")
+print(tfidf_df)
+
+
+# Document similarity function
+def doc_sim(similarity_matrix, sentences):
+    for i in range(len(sentences)):
+        sim = similarity_matrix[i].copy()
+        sim[i] = -1
+        top_index = np.argmax(sim)
+        print("\nDocument:", sentences[i])
+        print("Most similar document:", sentences[top_index])
+
+
+doc_sim(tfidf_similarity, sentences)
+
+# Conclusion:
+# TF-IDF gives importance to meaningful words and helps find similarity
+# between documents based on word importance.
