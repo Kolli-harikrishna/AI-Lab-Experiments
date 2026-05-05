@@ -1,0 +1,111 @@
+# --------------------------------------------------------
+# Experiment No: 10
+# Title: TextRank for Document Summarization
+# Subject: Artificial Intelligence (01CT0616)
+# Student: Kolli Harikrishna
+# --------------------------------------------------------
+
+# Libraries Used:
+# nltk → sentence/word tokenization and stopword removal
+# networkx → graph creation and PageRank
+# sklearn → cosine similarity
+# numpy → matrix operations
+
+# Application:
+# Used in news summarization, document summary, and NLP applications.
+
+# Import libraries
+import nltk
+import numpy as np
+import networkx as nx
+from nltk.tokenize import sent_tokenize, word_tokenize
+from nltk.corpus import stopwords
+from sklearn.metrics.pairwise import cosine_similarity
+from collections import Counter
+
+# Download resources
+nltk.download('punkt')
+nltk.download('punkt_tab')
+nltk.download('stopwords')
+
+
+# ---------------- PREPROCESSING ----------------
+def preprocessing(text):
+    stop_words = set(stopwords.words('english'))
+
+    # Split into sentences
+    sentences = sent_tokenize(text)
+
+    word_frequencies = []
+
+    for sent in sentences:
+        words = word_tokenize(sent)
+
+        filtered_words = [
+            word.lower() for word in words
+            if word.isalnum() and word.lower() not in stop_words
+        ]
+
+        word_frequencies.append(Counter(filtered_words))
+
+    return sentences, word_frequencies
+
+
+# ---------------- SIMILARITY MATRIX ----------------
+def similarity_matrix(word_frequencies):
+    size = len(word_frequencies)
+    sm = np.zeros((size, size))
+
+    for i in range(size):
+        for j in range(size):
+            if i != j:
+                words1 = word_frequencies[i]
+                words2 = word_frequencies[j]
+
+                common_words = set(words1.keys()).union(set(words2.keys()))
+
+                vec1 = np.array([words1.get(word, 0) for word in common_words])
+                vec2 = np.array([words2.get(word, 0) for word in common_words])
+
+                sm[i][j] = cosine_similarity([vec1], [vec2])[0][0]
+
+    return sm
+
+
+# ---------------- TEXTRANK ----------------
+def textrank_summarization(text, num_sentences=3):
+    sentences, word_frequencies = preprocessing(text)
+
+    sm = similarity_matrix(word_frequencies)
+
+    # Build graph
+    graph = nx.from_numpy_array(sm)
+
+    # PageRank
+    scores = nx.pagerank(graph)
+
+    # Rank sentences
+    ranked_sentences = sorted(
+        ((scores[i], s) for i, s in enumerate(sentences)),
+        reverse=True
+    )
+
+    summary = " ".join([sent for _, sent in ranked_sentences[:num_sentences]])
+
+    return summary
+
+
+# ---------------- INPUT TEXT ----------------
+text = """TextRank is a graph-based ranking model for text processing.
+It is widely used for keyword and sentence extraction.
+Text summarization reduces long text into short meaningful sentences.
+Graph-based algorithms help in ranking sentences based on importance.
+TextRank uses PageRank algorithm for ranking."""
+
+# ---------------- OUTPUT ----------------
+print("Summary:\n")
+print(textrank_summarization(text, 3))
+
+# Conclusion:
+# TextRank summarizes text by ranking sentences using graph-based PageRank
+# and selecting the most important sentences.
