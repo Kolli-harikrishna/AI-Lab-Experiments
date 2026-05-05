@@ -1,0 +1,60 @@
+# --------------------------------------------------------
+# Experiment No: 07
+# Title: N-Gram Model with Laplace Smoothing
+# Subject: Artificial Intelligence (01CT0616)
+# Student: Kolli Harikrishna
+# --------------------------------------------------------
+
+# Aim:
+# To generate N-Grams from text and apply Laplace smoothing.
+
+# Libraries Used:
+# collections.Counter
+
+# Application:
+# Used in NLP tasks like text prediction, language modeling, and autocomplete.
+
+from collections import Counter
+
+# Function to generate N-Grams
+def generate_ngrams(text, n):
+    tokens = text.split()
+    ngrams = [tuple(tokens[i:i + n]) for i in range(len(tokens) - n + 1)]
+    return ngrams
+
+
+# Input text
+text = "I love Semiconductor Fabrication"
+
+# Generate unigrams, bigrams, and trigrams
+unigrams = generate_ngrams(text, 1)
+bigrams = generate_ngrams(text, 2)
+trigrams = generate_ngrams(text, 3)
+
+print("Unigrams:", unigrams)
+print("Bigrams:", bigrams)
+print("Trigrams:", trigrams)
+
+
+# Function for Laplace smoothing
+def laplace_smoothing(ngrams, vocab_size):
+    ngram_counts = Counter(ngrams)
+
+    smoothed_ngrams = {
+        ngram: (count + 1) / (len(ngrams) + vocab_size)
+        for ngram, count in ngram_counts.items()
+    }
+
+    return smoothed_ngrams
+
+
+# Apply Laplace smoothing on bigrams
+vocab_size = 5
+smoothed_ngrams = laplace_smoothing(bigrams, vocab_size)
+
+print("Smoothed N-grams:", smoothed_ngrams)
+
+
+# Conclusion:
+# N-Grams represent sequences of words, and Laplace smoothing helps
+# handle unseen word combinations by assigning them small probabilities.
